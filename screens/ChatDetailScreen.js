@@ -46,6 +46,19 @@ export default function ChatDetailScreen({route, navigation}) {
   }, [id]);
 
   useEffect(() => {
+    // Mark all messages as read when screen is opened
+    if (messages.length > 0) {
+      const unreadMessageIds = messages
+        .filter(msg => !msg.isRead && msg.sender !== 'me')
+        .map(msg => msg.id);
+      
+      if (unreadMessageIds.length > 0) {
+        markMessagesAsRead(unreadMessageIds);
+      }
+    }
+  }, [id]);
+
+  useEffect(() => {
     let interval;
     if (isRecording) {
       interval = setInterval(() => {
@@ -67,6 +80,19 @@ export default function ChatDetailScreen({route, navigation}) {
     }
   };
 
+  const markMessagesAsRead = async (messageIds) => {
+    try {
+      await chatAPI.markMessagesAsRead(id, messageIds);
+      // Update messages state to mark as read
+      const updatedMessages = messages.map(msg =>
+        messageIds.includes(msg.id) ? { ...msg, isRead: true } : msg
+      );
+      setMessages(updatedMessages);
+    } catch (error) {
+      console.error('Error marking messages as read:', error);
+    }
+  };
+
   const sendMessage = async () => {
     if (inputText.trim() || selectedPhoto) {
       try {
@@ -74,6 +100,11 @@ export default function ChatDetailScreen({route, navigation}) {
         setMessages([...messages, newMessage]);
         setInputText('');
         setSelectedPhoto(null);
+        
+        // Call the callback to update parent chat with latest message
+        if (route.params?.onMessageSent) {
+          route.params.onMessageSent(newMessage);
+        }
       } catch (error) {
         console.error('Error sending message:', error);
       }
@@ -303,9 +334,19 @@ export default function ChatDetailScreen({route, navigation}) {
             data={messages}
             renderItem={renderMessage}
             keyExtractor={item => item.id}
-            contentContainerStyle={styles.messageList}
+            contentContainerStyle={messages.length === 0 ? styles.emptyMessageList : styles.messageList}
             inverted={false}
             scrollEnabled={!isRecording}
+            ListEmptyComponent={
+              <View style={styles.emptyMessagesContainer}>
+                <Text style={[styles.emptyMessagesText, {color: theme.colors.secondaryText}]}>
+                  No messages yet
+                </Text>
+                <Text style={[styles.emptyMessagesSubtext, {color: theme.colors.secondaryText}]}>
+                  Start a conversation! 👋
+                </Text>
+              </View>
+            }
           />
           {selectedPhoto && (
             <View style={[styles.photoPreview, {backgroundColor: theme.colors.surface}]}>
@@ -665,5 +706,24 @@ const styles = StyleSheet.create({
     height: 200,
     borderRadius: 12,
     marginBottom: 6,
+  },
+  emptyMessageList: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  emptyMessagesContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 60,
+  },
+  emptyMessagesText: {
+    fontSize: 18,
+    fontWeight: '700',
+    marginBottom: 8,
+  },
+  emptyMessagesSubtext: {
+    fontSize: 14,
+    fontWeight: '500',
   },
 });
