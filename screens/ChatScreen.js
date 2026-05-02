@@ -234,7 +234,15 @@ export default function ChatScreen({navigation}) {
   // Render contact item for contacts list
   const renderContactItem = ({item}) => (
     <TouchableOpacity
-      style={[styles.contactItem, {borderBottomColor: theme.colors.borderColor}]}
+      style={[styles.contactItem, {
+        backgroundColor: theme.name === 'dark' 
+          ? 'rgba(255, 255, 255, 0.05)' 
+          : 'rgba(0, 0, 0, 0.02)',
+        borderColor: theme.name === 'dark'
+          ? 'rgba(255, 255, 255, 0.08)'
+          : 'rgba(0, 0, 0, 0.05)',
+        borderWidth: 1,
+      }]}
       onPress={() => handleSelectContact(item)}
       activeOpacity={0.6}>
       <View style={[styles.contactAvatar, {backgroundColor: theme.colors.surface}]}>
@@ -248,7 +256,15 @@ export default function ChatScreen({navigation}) {
 
   const renderChat = ({item}) => (
     <TouchableOpacity
-      style={[styles.chatItem, {borderBottomColor: theme.colors.borderColor}]}
+      style={[styles.chatItem, {
+        backgroundColor: theme.name === 'dark' 
+          ? 'rgba(255, 255, 255, 0.05)' 
+          : 'rgba(0, 0, 0, 0.02)',
+        borderColor: theme.name === 'dark'
+          ? 'rgba(255, 255, 255, 0.08)'
+          : 'rgba(0, 0, 0, 0.05)',
+        borderWidth: 1,
+      }]}
       onPress={() => handleChatPress(item)}
       activeOpacity={0.6}>
       <View style={styles.avatarWrapper}>
@@ -262,7 +278,7 @@ export default function ChatScreen({navigation}) {
             <Text style={{fontSize: 28}}>{item.avatar}</Text>
           </View>
         )}
-        {item.online && <View style={[styles.onlineDot, {backgroundColor: '#4ade80'}]} />}
+        {item.online && <View style={[styles.onlineDot, {backgroundColor: '#10b981'}]} />}
       </View>
 
       <View style={styles.chatContentWrapper}>
@@ -327,7 +343,15 @@ export default function ChatScreen({navigation}) {
 
     return (
       <TouchableOpacity
-        style={[styles.searchResultItem, {borderBottomColor: theme.colors.borderColor}]}
+        style={[styles.searchResultItem, {
+          backgroundColor: theme.name === 'dark' 
+            ? 'rgba(255, 255, 255, 0.05)' 
+            : 'rgba(0, 0, 0, 0.02)',
+          borderColor: theme.name === 'dark'
+            ? 'rgba(255, 255, 255, 0.08)'
+            : 'rgba(0, 0, 0, 0.05)',
+          borderWidth: 1,
+        }]}
         onPress={() => handleChatPress(item)}
         activeOpacity={0.6}>
         <View style={styles.avatarWrapper}>
@@ -341,7 +365,7 @@ export default function ChatScreen({navigation}) {
               <Text style={{fontSize: 28}}>{item.avatar}</Text>
             </View>
           )}
-          {item.online && <View style={[styles.onlineDot, {backgroundColor: '#4ade80'}]} />}
+          {item.online && <View style={[styles.onlineDot, {backgroundColor: '#10b981'}]} />}
         </View>
 
         <View style={styles.searchResultContentWrapper}>
@@ -400,8 +424,15 @@ export default function ChatScreen({navigation}) {
           </View>
         </View>
 
-        {/* Search bar */}
-        <View style={[styles.searchContainer, {backgroundColor: theme.colors.surface, borderColor: theme.colors.borderColor}]}>
+        {/* Search bar with modern styling */}
+        <View style={[styles.searchContainer, {
+          backgroundColor: theme.name === 'dark' 
+            ? 'rgba(255, 255, 255, 0.08)' 
+            : 'rgba(0, 0, 0, 0.05)',
+          borderColor: theme.name === 'dark'
+            ? 'rgba(255, 255, 255, 0.15)'
+            : 'rgba(0, 0, 0, 0.1)',
+        }]}>
           <Search size={18} color={theme.colors.secondaryText} />
           <TextInput
             style={[styles.searchInput, {color: theme.colors.primaryText}]}
@@ -444,7 +475,17 @@ export default function ChatScreen({navigation}) {
         ]}
         onPress={() => setShowContactsModal(true)}
         activeOpacity={0.75}>
-        <Plus size={28} color="#fff" />
+        <LinearGradient
+          colors={[theme.colors.brandAccent, theme.colors.brandAccent]}
+          style={{
+            width: '100%',
+            height: '100%',
+            borderRadius: 30,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <Plus size={28} color="#fff" strokeWidth={2.5} />
+        </LinearGradient>
       </TouchableOpacity>
 
       {/* Settings Menu Modal */}
@@ -453,9 +494,21 @@ export default function ChatScreen({navigation}) {
           style={styles.modalOverlay}
           activeOpacity={1}
           onPress={() => setShowMenu(false)}>
-          <View style={[styles.menuContainer, {backgroundColor: theme.colors.surface, borderColor: theme.colors.borderColor}]}>
+          <View style={[styles.menuContainer, {
+            backgroundColor: theme.name === 'dark'
+              ? 'rgba(30, 30, 30, 0.95)'
+              : 'rgba(255, 255, 255, 0.95)',
+            borderColor: theme.name === 'dark'
+              ? 'rgba(255, 255, 255, 0.1)'
+              : 'rgba(0, 0, 0, 0.1)',
+          }]}>
             <TouchableOpacity 
-              style={[styles.menuItem, {borderBottomColor: theme.colors.borderColor}]}
+              style={[styles.menuItem, {
+                borderBottomColor: theme.name === 'dark'
+                  ? 'rgba(255, 255, 255, 0.08)'
+                  : 'rgba(0, 0, 0, 0.05)',
+                borderBottomWidth: 1,
+              }]}
               onPress={() => {
                 toggleTheme();
                 setShowMenu(false);
@@ -473,7 +526,12 @@ export default function ChatScreen({navigation}) {
             </TouchableOpacity>
 
             <TouchableOpacity 
-              style={[styles.menuItem, {borderBottomColor: theme.colors.borderColor}]}
+              style={[styles.menuItem, {
+                borderBottomColor: theme.name === 'dark'
+                  ? 'rgba(255, 255, 255, 0.08)'
+                  : 'rgba(0, 0, 0, 0.05)',
+                borderBottomWidth: 1,
+              }]}
               onPress={() => {
                 navigation.navigate('Profile');
                 setShowMenu(false);
@@ -536,9 +594,16 @@ export default function ChatScreen({navigation}) {
           style={styles.confirmationOverlay}
           activeOpacity={1}
           onPress={() => setShowConfirmationModal(false)}>
-          <View style={[styles.confirmationContainer, {backgroundColor: theme.colors.surface, borderColor: theme.colors.borderColor}]}>
+          <View style={[styles.confirmationContainer, {
+            backgroundColor: theme.name === 'dark'
+              ? 'rgba(30, 30, 30, 0.98)'
+              : 'rgba(255, 255, 255, 0.98)',
+            borderColor: theme.name === 'dark'
+              ? 'rgba(255, 255, 255, 0.15)'
+              : 'rgba(0, 0, 0, 0.1)',
+          }]}>
             <View style={{alignItems: 'center', marginBottom: 20}}>
-              <View style={[styles.confirmationAvatar, {backgroundColor: theme.colors.mainBackground}]}>
+              <View style={[styles.confirmationAvatar, {backgroundColor: theme.colors.surface}]}>
                 <Text style={styles.confirmationAvatarText}>
                   {selectedContact?.avatar}
                 </Text>
@@ -582,57 +647,60 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   headerGradient: {
-    paddingTop: 24,
-    paddingBottom: 20,
-    paddingHorizontal: 16,
+    paddingTop: 32,
+    paddingBottom: 28,
+    paddingHorizontal: 20,
   },
   headerTitle: {
-    fontFamily: 'Georgia',
-    fontSize: 32,
-    fontWeight: '800',
-    letterSpacing: -0.50,
-    paddingHorizontal: 16,
+    fontFamily: 'System',
+    fontSize: 36,
+    fontWeight: '900',
+    letterSpacing: -1,
+    paddingHorizontal: 0,
+    textTransform: 'capitalize',
   },
   headerContent: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 16,
+    alignItems: 'flex-start',
+    marginBottom: 20,
   },
   headerSubtitle: {
     fontFamily: 'System',
-    fontSize: 13,
-    fontWeight: '500',
-    marginTop: 2,
+    fontSize: 14,
+    fontWeight: '600',
+    marginTop: 6,
+    opacity: 0.8,
   },
   headerIcons: {
     flexDirection: 'row',
-    gap: 12,
+    gap: 14,
   },
   headerIconBtn: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     justifyContent: 'center',
     alignItems: 'center',
   },
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderWidth: 1,
-    borderRadius: 24,
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-    gap: 10,
+    borderWidth: 0,
+    borderRadius: 28,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    gap: 12,
   },
   searchInput: {
     fontFamily: 'System',
     flex: 1,
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: '500',
   },
   listContent: {
-    paddingTop: 8,
+    paddingTop: 12,
+    paddingHorizontal: 12,
   },
   emptyContainer: {
     flex: 1,
@@ -641,16 +709,19 @@ const styles = StyleSheet.create({
     paddingVertical: 40,
   },
   emptyText: {
-    fontSize: 16,
-    fontWeight: '500',
+    fontSize: 17,
+    fontWeight: '600',
   },
   chatItem: {
     flexDirection: 'row',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderBottomWidth: 0.5,
+    paddingHorizontal: 12,
+    paddingVertical: 14,
+    borderBottomWidth: 0,
     alignItems: 'center',
-    gap: 12,
+    gap: 14,
+    marginHorizontal: 4,
+    marginVertical: 6,
+    borderRadius: 20,
   },
   avatarWrapper: {
     position: 'relative',
@@ -658,26 +729,26 @@ const styles = StyleSheet.create({
   avatarContainer: {
     width: 56,
     height: 56,
-    borderRadius: 28,
+    borderRadius: 18,
     justifyContent: 'center',
     alignItems: 'center',
-    elevation: 4,
+    elevation: 0,
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.2,
-    shadowRadius: 3,
+    shadowOffset: {width: 0, height: 0},
+    shadowOpacity: 0,
+    shadowRadius: 0,
   },
   avatarText: {
     fontSize: 28,
   },
   onlineDot: {
     position: 'absolute',
-    bottom: 2,
-    right: 2,
-    width: 14,
-    height: 14,
-    borderRadius: 7,
-    borderWidth: 2,
+    bottom: 0,
+    right: 0,
+    width: 16,
+    height: 16,
+    borderRadius: 8,
+    borderWidth: 3,
     borderColor: '#fff',
   },
   chatContentWrapper: {
@@ -691,7 +762,7 @@ const styles = StyleSheet.create({
   },
   chatName: {
     fontFamily: 'System',
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: '700',
     lineHeight: 20,
     flex: 1,
@@ -699,14 +770,16 @@ const styles = StyleSheet.create({
   chatTime: {
     fontFamily: 'System',
     fontSize: 12,
-    fontWeight: '400',
+    fontWeight: '500',
     marginLeft: 8,
+    opacity: 0.7,
   },
   chatMessage: {
     fontFamily: 'System',
     fontSize: 13,
     fontWeight: '400',
     lineHeight: 18,
+    opacity: 0.75,
   },
   relevanceLabel: {
     fontFamily: 'System',
@@ -715,31 +788,34 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   unreadBadge: {
-    minWidth: 28,
-    height: 28,
-    borderRadius: 14,
+    minWidth: 24,
+    height: 24,
+    borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
     marginLeft: 8,
-    elevation: 4,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
+    elevation: 0,
+    shadowColor: 'transparent',
+    shadowOffset: {width: 0, height: 0},
+    shadowOpacity: 0,
+    shadowRadius: 0,
   },
   unreadText: {
     fontFamily: 'System',
     color: '#fff',
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: '700',
   },
   searchResultItem: {
     flexDirection: 'row',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderBottomWidth: 0.5,
+    paddingHorizontal: 14,
+    paddingVertical: 14,
+    borderBottomWidth: 0,
     alignItems: 'flex-start',
-    gap: 12,
+    gap: 14,
+    marginHorizontal: 4,
+    marginVertical: 6,
+    borderRadius: 18,
   },
   searchResultContentWrapper: {
     flex: 1,
@@ -747,7 +823,7 @@ const styles = StyleSheet.create({
   },
   searchResultName: {
     fontFamily: 'System',
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: '700',
     lineHeight: 20,
   },
@@ -760,55 +836,56 @@ const styles = StyleSheet.create({
   searchResultSubtext: {
     fontFamily: 'System',
     fontSize: 13,
-    fontWeight: '400',
+    fontWeight: '500',
     lineHeight: 18,
+    opacity: 0.8,
   },
   fab: {
     position: 'absolute',
-    bottom: 24,
-    right: 24,
-    width: 64,
-    height: 64,
-    borderRadius: 32,
+    bottom: 28,
+    right: 28,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
     justifyContent: 'center',
     alignItems: 'center',
-    elevation: 8,
+    elevation: 12,
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 4},
-    shadowOpacity: 0.3,
-    shadowRadius: 5,
+    shadowOffset: {width: 0, height: 6},
+    shadowOpacity: 0.4,
+    shadowRadius: 8,
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
     justifyContent: 'flex-start',
     paddingTop: 60,
     paddingRight: 16,
   },
   menuContainer: {
     alignSelf: 'flex-end',
-    borderRadius: 12,
-    borderWidth: 1,
+    borderRadius: 18,
+    borderWidth: 0,
     overflow: 'hidden',
-    elevation: 8,
+    elevation: 12,
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 4},
-    shadowOpacity: 0.3,
-    shadowRadius: 5,
+    shadowOffset: {width: 0, height: 8},
+    shadowOpacity: 0.25,
+    shadowRadius: 12,
     minWidth: 180,
   },
   menuItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 16,
+    paddingHorizontal: 18,
     paddingVertical: 14,
-    borderBottomWidth: 1,
+    borderBottomWidth: 0,
   },
   menuIconLeft: {
-    marginRight: 12,
+    marginRight: 14,
   },
   menuText: {
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: '600',
   },
   // Contacts Modal Styles
@@ -820,99 +897,104 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingTop: 16,
-    paddingBottom: 16,
+    paddingHorizontal: 20,
+    paddingTop: 20,
+    paddingBottom: 18,
   },
   contactsHeaderTitle: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: '700',
     flex: 1,
     textAlign: 'center',
   },
   contactsBackBtn: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     justifyContent: 'center',
     alignItems: 'center',
   },
   contactsListContent: {
     paddingVertical: 8,
+    paddingHorizontal: 12,
   },
   contactItem: {
     flexDirection: 'row',
-    paddingHorizontal: 16,
+    paddingHorizontal: 14,
     paddingVertical: 14,
-    borderBottomWidth: 0.5,
+    borderBottomWidth: 0,
     alignItems: 'center',
     gap: 14,
+    marginHorizontal: 4,
+    marginVertical: 6,
+    borderRadius: 18,
   },
   contactAvatar: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
+    width: 50,
+    height: 50,
+    borderRadius: 16,
     justifyContent: 'center',
     alignItems: 'center',
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 1},
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
+    elevation: 0,
+    shadowColor: 'transparent',
+    shadowOffset: {width: 0, height: 0},
+    shadowOpacity: 0,
+    shadowRadius: 0,
   },
   contactAvatarText: {
-    fontSize: 24,
+    fontSize: 26,
   },
   contactName: {
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: '600',
     flex: 1,
   },
   // Confirmation Modal Styles
   confirmationOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 24,
   },
   confirmationContainer: {
-    borderRadius: 20,
-    borderWidth: 1,
-    paddingHorizontal: 24,
-    paddingVertical: 28,
-    elevation: 10,
+    borderRadius: 28,
+    borderWidth: 0,
+    paddingHorizontal: 28,
+    paddingVertical: 32,
+    elevation: 14,
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 8},
-    shadowOpacity: 0.35,
-    shadowRadius: 12,
+    shadowOffset: {width: 0, height: 12},
+    shadowOpacity: 0.3,
+    shadowRadius: 16,
   },
   confirmationAvatar: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
+    width: 88,
+    height: 88,
+    borderRadius: 26,
     justifyContent: 'center',
     alignItems: 'center',
-    elevation: 4,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
+    elevation: 0,
+    shadowColor: 'transparent',
+    shadowOffset: {width: 0, height: 0},
+    shadowOpacity: 0,
+    shadowRadius: 0,
   },
   confirmationAvatarText: {
-    fontSize: 40,
+    fontSize: 44,
   },
   confirmationTitle: {
-    fontSize: 18,
-    fontWeight: '700',
+    fontSize: 20,
+    fontWeight: '800',
     textAlign: 'center',
-    marginBottom: 8,
+    marginBottom: 10,
   },
   confirmationMessage: {
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: '500',
     textAlign: 'center',
-    marginBottom: 24,
+    marginBottom: 28,
+    opacity: 0.8,
   },
   confirmationButtonGroup: {
     flexDirection: 'row',
@@ -921,18 +1003,18 @@ const styles = StyleSheet.create({
   confirmationButton: {
     flex: 1,
     flexDirection: 'row',
-    paddingVertical: 12,
-    borderRadius: 12,
+    paddingVertical: 14,
+    borderRadius: 16,
     justifyContent: 'center',
     alignItems: 'center',
-    elevation: 2,
+    elevation: 4,
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 1},
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
   },
   confirmationButtonText: {
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: '700',
   },
 });
