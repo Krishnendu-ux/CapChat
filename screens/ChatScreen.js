@@ -38,6 +38,7 @@ export default function ChatScreen({navigation}) {
       imageSource: require('../assets/ravi.jpeg'),
       unread: 2,
       online: true,
+      vibe: "delulu era 🌀",
     },
     {
       id: '2',
@@ -47,6 +48,7 @@ export default function ChatScreen({navigation}) {
       imageSource: require('../assets/raju.png'),
       unread: 0,
       online: true,
+      vibe: "rizzing up 🔥",
     },
     {
       id: '3',
@@ -56,6 +58,7 @@ export default function ChatScreen({navigation}) {
       imageSource: require('../assets/the\ squad.jpeg'),
       unread: 3,
       online: false,
+      vibe: "serving looks ✨",
     },
     {
       id: '4',
@@ -65,6 +68,7 @@ export default function ChatScreen({navigation}) {
       imageSource: require('../assets/mom.jpeg'),
       unread: 1,
       online: false,
+      vibe: "touching grass 🌿",
     },
   ]);
 
@@ -160,6 +164,13 @@ export default function ChatScreen({navigation}) {
           )
         );
       },
+      onVibeUpdate: (newVibe) => {
+        setChats(prevChats =>
+          prevChats.map(c =>
+            c.id === chat.id ? { ...c, vibe: newVibe } : c
+          )
+        );
+      }
     });
   };
 
@@ -203,8 +214,9 @@ export default function ChatScreen({navigation}) {
       time: 'Just now',
       imageSource: null,
       unread: 0,
-      online: Math.random() > 0.5, // Random online status
+      online: Math.random() > 0.5,
       avatar: selectedContact.avatar,
+      vibe: "new vibe unlocked ✨",
     };
 
     // Add to chats list
@@ -283,9 +295,18 @@ export default function ChatScreen({navigation}) {
 
       <View style={styles.chatContentWrapper}>
         <View style={styles.chatHeaderRow}>
-          <Text style={[styles.chatName, {color: theme.colors.primaryText}]} numberOfLines={1}>
-            {item.name}
-          </Text>
+          <View style={{flexDirection: 'row', alignItems: 'center', flex: 1}}>
+            <Text style={[styles.chatName, {color: theme.colors.primaryText}]} numberOfLines={1}>
+              {item.name}
+            </Text>
+            
+            {item.vibe && (
+              <View style={styles.vibeBadge}>
+                <Text style={styles.vibeText}>{item.vibe}</Text>
+              </View>
+            )}
+          </View>
+
           <Text style={[styles.chatTime, {color: theme.colors.secondaryText}]}>
             {item.time}
           </Text>
@@ -369,16 +390,24 @@ export default function ChatScreen({navigation}) {
         </View>
 
         <View style={styles.searchResultContentWrapper}>
-          {/* Name with highlight if matched */}
-          {hasNameMatch ? (
-            renderHighlightedText(item.name, searchQuery, true)
-          ) : (
-            <Text style={[styles.searchResultName, {color: theme.colors.primaryText}]}>
-              {item.name}
-            </Text>
-          )}
+          {/* Name + Vibe */}
+          <View style={{flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap'}}>
+            {hasNameMatch ? (
+              renderHighlightedText(item.name, searchQuery, true)
+            ) : (
+              <Text style={[styles.searchResultName, {color: theme.colors.primaryText}]}>
+                {item.name}
+              </Text>
+            )}
+            
+            {item.vibe && (
+              <View style={[styles.vibeBadge, {marginLeft: 8}]}>
+                <Text style={styles.vibeText}>{item.vibe}</Text>
+              </View>
+            )}
+          </View>
           
-          {/* Message with highlight if matched */}
+          {/* Message part remains same */}
           {hasMessageMatch ? (
             <View style={{marginTop: 4}}>
               <Text style={[styles.searchResultSubtext, {color: theme.colors.secondaryText}]}>
@@ -1016,5 +1045,19 @@ const styles = StyleSheet.create({
   confirmationButtonText: {
     fontSize: 15,
     fontWeight: '700',
+  },
+  vibeBadge: {
+    backgroundColor: 'rgba(255, 20, 147, 0.15)',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 12,
+    marginLeft: 6,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 20, 147, 0.3)',
+  },
+  vibeText: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#ff1493',
   },
 });

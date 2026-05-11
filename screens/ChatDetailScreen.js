@@ -18,9 +18,10 @@ import { useTheme } from '../ThemeContext';
 import chatAPI from '../api';
 import { Send, Smile, Camera, X, ArrowLeft, Phone, Video, MoreVertical, Mic } from 'lucide-react-native';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
+import { useRef } from 'react';
 
 export default function ChatDetailScreen({route, navigation}) {
-  const {name, id} = route.params;
+  const {name, id, onMessageSent, onVibeUpdate} = route.params;
   const {theme} = useTheme();
   const [messages, setMessages] = useState([]);
   const [inputText, setInputText] = useState('');
@@ -30,6 +31,10 @@ export default function ChatDetailScreen({route, navigation}) {
   const [isRecording, setIsRecording] = useState(false);
   const [recordingTime, setRecordingTime] = useState(0);
   const [showMenu, setShowMenu] = useState(false);
+  const [currentVibe, setCurrentVibe] = useState("vibing rn ✨");
+  const [showVibeModal, setShowVibeModal] = useState(false);
+  const [capMode, setCapMode] = useState(false);
+  const [userVotes, setUserVotes] = useState({}); 
 
   // Avatar image mapping
   const avatarMap = {
@@ -40,6 +45,20 @@ export default function ChatDetailScreen({route, navigation}) {
   };
 
   const contactAvatar = avatarMap[name] || null;
+
+  const vibeOptions = [
+    "delulu era 🌀",
+    "touching grass 🌿",
+    "in my villain arc 😈",
+    "rizzing up 🔥",
+    "overstimulated af ⚡",
+    "serving looks ✨",
+    "main character energy 🎥",
+    "certified yapper 🗣️",
+    "healing era 🫂",
+    "ghosting duties 👻",
+    "in my feels rn 🥺"
+  ];
 
   useEffect(() => {
     loadMessages();
@@ -68,46 +87,21 @@ export default function ChatDetailScreen({route, navigation}) {
     return () => clearInterval(interval);
   }, [isRecording]);
 
+  useEffect(() => {
+    if (messages.length > 0) {
+    }
+  }, [messages]);
+
+  const capCache = useRef({}); // Will store Cap data persistently
   const loadMessages = async () => {
     try {
       setLoading(true);
       const fetchedMessages = await chatAPI.fetchMessages(id);
-      setMessages(fetchedMessages);
+      setMessages(fetchedMessages);   // Simple - no merge for now
     } catch (error) {
       console.error('Error loading messages:', error);
     } finally {
       setLoading(false);
-    }
-  };
-
-  const markMessagesAsRead = async (messageIds) => {
-    try {
-      await chatAPI.markMessagesAsRead(id, messageIds);
-      // Update messages state to mark as read
-      const updatedMessages = messages.map(msg =>
-        messageIds.includes(msg.id) ? { ...msg, isRead: true } : msg
-      );
-      setMessages(updatedMessages);
-    } catch (error) {
-      console.error('Error marking messages as read:', error);
-    }
-  };
-
-  const sendMessage = async () => {
-    if (inputText.trim() || selectedPhoto) {
-      try {
-        const newMessage = await chatAPI.sendMessage(id, inputText, selectedPhoto);
-        setMessages([...messages, newMessage]);
-        setInputText('');
-        setSelectedPhoto(null);
-        
-        // Call the callback to update parent chat with latest message
-        if (route.params?.onMessageSent) {
-          route.params.onMessageSent(newMessage);
-        }
-      } catch (error) {
-        console.error('Error sending message:', error);
-      }
     }
   };
 
@@ -146,6 +140,24 @@ export default function ChatDetailScreen({route, navigation}) {
     });
   };
 
+  const getAttitudeReceipt = (item) => {
+    if (item.sender !== 'me') {
+      return formatTime(item.timestamp);
+    }
+
+    // Don't show funny status on very old messages or messages that have replies
+    if (item.hasReply || Date.now() - new Date(item.timestamp).getTime() > 3600000) { 
+      return formatTime(item.timestamp); // Show normal time for old messages
+    }
+
+    const rand = Math.random();
+    
+    if (rand > 0.7) return "Left on read 💀";
+    if (rand > 0.45) return "Seen by the delusions 👀";
+    if (rand > 0.25) return "Delivered fr ✨";
+    return "Just now";
+  };
+
   const formatRecordingTime = (seconds) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
@@ -159,14 +171,15 @@ export default function ChatDetailScreen({route, navigation}) {
 
   const handleStopRecording = () => {
     setIsRecording(false);
-    // Send voice message
+    
     const newMessage = {
-      id: Date.now().toString(),
+      id: 'voice-' + Date.now().toString(),   // ← Better unique ID
       sender: 'me',
       text: `Voice message (${formatRecordingTime(recordingTime)})`,
       timestamp: new Date(),
       isVoice: true,
     };
+    
     setMessages([...messages, newMessage]);
     setRecordingTime(0);
   };
@@ -179,53 +192,123 @@ export default function ChatDetailScreen({route, navigation}) {
     alert('📹 Starting video call with ' + name);
   };
 
-  const renderMessage = ({item}) => (
-    <View
-      style={[
-        styles.messageContainer,
-        item.sender === 'me' ? styles.myMessage : styles.otherMessage,
-      ]}>
-      {item.photo && (
-        <TouchableOpacity onPress={() => setViewingPhoto(item.photo)}>
-          <Image
-            source={{uri: item.photo}}
-            style={styles.messagePhoto}
-          />
-        </TouchableOpacity>
-      )}
-      {item.text && (
-        <LinearGradient
-          colors={
-            item.sender === 'me'
-              ? [theme.colors.sentBubbleStart, theme.colors.sentBubbleEnd]
-              : [theme.colors.receivedBubble, theme.colors.receivedBubble]
+  const handleCapVote = (messageId, voteType) => {
+    setMessages(prevMessages => 
+      prevMessages.map(msg => {
+        if (msg.id === messageId && msg.isCap) {
+          if (msg.userVoted) {
+            alert("You've already voted! 👀");
+            return msg;
           }
-          start={{x: 0, y: 0}}
-          end={{x: 1, y: 1}}
-          style={[
-            styles.messageBubble,
-            item.sender === 'me'
-              ? {borderTopRightRadius: 4}
-              : {borderTopLeftRadius: 4, borderWidth: 1, borderColor: theme.colors.receivedBubbleBorder},
-          ]}>
-          <Text
-            style={[
-              styles.messageText,
-              {color: item.sender === 'me' ? '#fff' : theme.colors.primaryText},
-            ]}>
-            {item.text}
-          </Text>
-          <Text
-            style={[
-              styles.messageTime,
-              {color: item.sender === 'me' ? 'rgba(255,255,255,0.65)' : theme.colors.secondaryText},
-            ]}>
-            {formatTime(item.timestamp)}
-          </Text>
-        </LinearGradient>
-      )}
-    </View>
-  );
+
+          const current = msg.capVotes || { cap: 0, noCap: 0 };
+          const updatedMsg = {
+            ...msg,
+            capVotes: {
+              ...current,
+              [voteType]: current[voteType] + 1
+            },
+            userVoted: voteType
+          };
+
+          // Save to cache
+          capCache.current[messageId] = {
+            capVotes: updatedMsg.capVotes,
+            userVoted: voteType
+          };
+
+          return updatedMsg;
+        }
+        return msg;
+      })
+    );
+  };
+
+const sendMessage = async () => {
+  if (!inputText.trim() && !selectedPhoto) return;
+
+  try {
+    const newMessageFromAPI = await chatAPI.sendMessage(id, inputText, selectedPhoto);
+    
+    const finalMessage = {
+      ...newMessageFromAPI,
+      id: 'msg-' + Date.now().toString(),
+      isCap: capMode,
+      capVotes: capMode ? { cap: 0, noCap: 0 } : undefined,
+      userVoted: null
+    };
+
+    setMessages(prev => [...prev, finalMessage]);
+    setInputText('');
+    setSelectedPhoto(null);
+    setCapMode(false);
+
+    if (route.params?.onMessageSent) {
+      route.params.onMessageSent(finalMessage);
+    }
+  } catch (error) {
+    console.error('Error sending message:', error);
+  }
+};
+
+  const renderMessage = ({item}) => {
+    const isCap = item.isCap || false;
+
+    return (
+      <View style={[styles.messageContainer, item.sender === 'me' ? styles.myMessage : styles.otherMessage]}>
+        {/* ... photo part same ... */}
+
+        {item.text && (
+          <TouchableOpacity 
+            onLongPress={() => isCap && handleCapVote(item.id)}
+            activeOpacity={0.9}
+          >
+            <LinearGradient
+              colors={item.sender === 'me' ? [theme.colors.sentBubbleStart, theme.colors.sentBubbleEnd] : [theme.colors.receivedBubble, theme.colors.receivedBubble]}
+              style={[
+                styles.messageBubble,
+                isCap && styles.capMessageBorder,
+                item.sender === 'me' ? {borderTopRightRadius: 4} : {borderTopLeftRadius: 4, borderWidth: 1, borderColor: theme.colors.receivedBubbleBorder},
+              ]}>
+              
+              {isCap && <Text style={styles.capLabel}>🔥 CAP MODE</Text>}
+              
+              <Text style={[styles.messageText, {color: item.sender === 'me' ? '#fff' : theme.colors.primaryText}]}>
+                {item.text}
+              </Text>
+              
+              <Text style={[styles.messageTime, {color: item.sender === 'me' ? 'rgba(255,255,255,0.65)' : theme.colors.secondaryText}]}>
+                {getAttitudeReceipt(item)}
+              </Text>
+            </LinearGradient>
+          </TouchableOpacity>
+        )}
+
+        {/* Voting UI */}
+        {isCap && (
+          <View style={styles.capVotesContainer}>
+            <TouchableOpacity 
+              style={[styles.capVoteBtn, {backgroundColor: theme.colors.surface, borderColor: theme.colors.borderColor}, item.userVoted === 'cap' && styles.myVoteStyle]}
+              onPress={() => handleCapVote(item.id, 'cap')}
+              disabled={!!item.userVoted}>
+              <Text style={[styles.capVoteText, {color: theme.colors.primaryText}]}>
+                Cap 🔥 ({item.capVotes?.cap || 0})
+              </Text>
+            </TouchableOpacity>
+            
+            <TouchableOpacity 
+              style={[styles.capVoteBtn, {backgroundColor: theme.colors.surface, borderColor: theme.colors.borderColor}, item.userVoted === 'noCap' && styles.myVoteStyle]}
+              onPress={() => handleCapVote(item.id, 'noCap')}
+              disabled={!!item.userVoted}>
+              <Text style={[styles.capVoteText, {color: theme.colors.primaryText}]}>
+                No Cap ✅ ({item.capVotes?.noCap || 0})
+              </Text>
+            </TouchableOpacity>
+          </View>
+        )}
+      </View>
+    );
+  };
 
   return (
     <KeyboardAvoidingView
@@ -272,8 +355,8 @@ export default function ChatDetailScreen({route, navigation}) {
                 <Text style={[styles.headerName, {color: theme.colors.primaryText}]}>
                   {name}
                 </Text>
-                <Text style={[styles.headerStatus, {color: theme.colors.secondaryText}]}>
-                  Active now ✨
+                <Text style={[styles.headerStatus, {color: theme.colors.brandAccent, fontWeight: '600', fontSize: 13}]}>
+                  {currentVibe}
                 </Text>
               </View>
 
@@ -288,6 +371,13 @@ export default function ChatDetailScreen({route, navigation}) {
                   style={styles.actionIconBtn}
                   onPress={handleCallPress}>
                   <Phone size={20} color={theme.colors.brandAccent} />
+                </TouchableOpacity>
+
+                {/* Vibe Button - Better Position */}
+                <TouchableOpacity 
+                  style={styles.actionIconBtn}
+                  onPress={() => setShowVibeModal(true)}>
+                  <Text style={{fontSize: 24}}>🌟</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity 
@@ -333,7 +423,7 @@ export default function ChatDetailScreen({route, navigation}) {
           <FlatList
             data={messages}
             renderItem={renderMessage}
-            keyExtractor={item => item.id}
+            keyExtractor={item => item.id?.toString() || Math.random().toString()}
             contentContainerStyle={messages.length === 0 ? styles.emptyMessageList : styles.messageList}
             inverted={false}
             scrollEnabled={!isRecording}
@@ -381,10 +471,18 @@ export default function ChatDetailScreen({route, navigation}) {
                 backgroundColor: theme.colors.surface,
               },
             ]}>
+            
             <TouchableOpacity style={styles.iconBtn} onPress={handleCameraPress}>
               <Camera size={20} color={theme.colors.brandAccent} />
             </TouchableOpacity>
-            
+
+            {/* 🔥 Cap Mode Toggle */}
+            <TouchableOpacity 
+              style={[styles.capToggle, capMode && styles.capToggleActive]}
+              onPress={() => setCapMode(!capMode)}>
+              <Text style={styles.capText}>🔥 Cap</Text>
+            </TouchableOpacity>
+
             {!isRecording ? (
               <>
                 <TextInput
@@ -409,6 +507,7 @@ export default function ChatDetailScreen({route, navigation}) {
                   <Smile size={20} color={theme.colors.brandAccent} />
                 </TouchableOpacity>
                 
+                {/* Send or Voice Button */}
                 {(inputText.trim() || selectedPhoto) ? (
                   <TouchableOpacity
                     style={[styles.sendButton, {backgroundColor: theme.colors.brandAccent}]}
@@ -453,6 +552,53 @@ export default function ChatDetailScreen({route, navigation}) {
         </>
       )}
       </View>
+      {/* Vibe Selector Modal */}
+      <Modal 
+        visible={showVibeModal} 
+        transparent 
+        animationType="slide"
+      >
+        <View style={styles.vibeModalOverlay}>
+          <View style={[styles.vibeModalContent, {backgroundColor: theme.colors.surface, borderColor: theme.colors.borderColor}]}>
+            
+            <Text style={[styles.vibeModalTitle, {color: theme.colors.primaryText}]}>
+              What's your vibe today?
+            </Text>
+
+            <FlatList
+              data={vibeOptions}
+              keyExtractor={item => item.id?.toString() || Math.random().toString()}
+              renderItem={({item}) => (
+                <TouchableOpacity
+                  style={[styles.vibeOption, {borderBottomColor: theme.colors.borderColor}]}
+                  onPress={() => {
+                    setCurrentVibe(item);
+                    setShowVibeModal(false);
+                    
+                    // Update in Chat List as well
+                    if (onVibeUpdate) {
+                      onVibeUpdate(item);
+                    }
+                    
+                    alert(`Vibe updated → ${item} 🔥`);
+                  }}>
+                  <Text style={[styles.vibeOptionText, {color: theme.colors.primaryText}]}>
+                    {item}
+                  </Text>
+                </TouchableOpacity>
+              )}
+            />
+
+            <TouchableOpacity 
+              style={styles.closeVibeBtn}
+              onPress={() => setShowVibeModal(false)}>
+              <Text style={{color: theme.colors.brandAccent, fontSize: 16, fontWeight: '600'}}>
+                Cancel
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </KeyboardAvoidingView>
   );
 }
@@ -597,7 +743,7 @@ const styles = StyleSheet.create({
   },
   headerActions: {
     flexDirection: 'row',
-    gap: 8,
+    gap: 6,
     alignItems: 'center',
   },
   actionIconBtn: {
@@ -725,5 +871,88 @@ const styles = StyleSheet.create({
   emptyMessagesSubtext: {
     fontSize: 14,
     fontWeight: '500',
+  },
+  vibeModalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.75)',
+    justifyContent: 'flex-end',
+  },
+  vibeModalContent: {
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    padding: 20,
+    maxHeight: '65%',
+    borderWidth: 1,
+  },
+  vibeModalTitle: {
+    fontSize: 22,
+    fontWeight: '700',
+    textAlign: 'center',
+    marginBottom: 24,
+  },
+  vibeOption: {
+    paddingVertical: 18,
+    borderBottomWidth: 1,
+  },
+  vibeOptionText: {
+    fontSize: 17,
+    fontWeight: '500',
+  },
+  closeVibeBtn: {
+    marginTop: 15,
+    paddingVertical: 16,
+    alignItems: 'center',
+  },
+  capToggle: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
+    backgroundColor: '#1f1f1f',
+    marginRight: 6,
+    borderWidth: 1.5,
+    borderColor: '#ff4444',
+  },
+  capToggleActive: {
+    backgroundColor: '#ff4444',
+  },
+  capText: {
+    color: '#fff',
+    fontWeight: '600',
+    fontSize: 13,
+  },
+  capMessageBorder: {
+    borderWidth: 2.5,
+    borderColor: '#ff4444',
+    borderStyle: 'dashed',
+  },
+  capLabel: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#ff4444',
+    marginBottom: 4,
+  },
+  capVotesContainer: {
+    flexDirection: 'row',
+    gap: 8,
+    marginTop: 4,
+    marginLeft: 12,
+  },
+  capVoteBtn: {
+    backgroundColor: '#ffffff',
+    paddingHorizontal: 14,
+    paddingVertical: 6,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: '#ddd',
+  },
+  capVoteText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#000',
+  },
+  myVoteStyle: {
+    borderColor: '#ff4444',
+    borderWidth: 2,
+    backgroundColor: '#ff444420',
   },
 });
