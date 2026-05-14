@@ -18,134 +18,70 @@ export default function ProfileScreen({navigation}) {
   };
 
   return (
-    <ScrollView style={[styles.container, {backgroundColor: theme.colors.mainBackground}]}>
+    <ScrollView style={[styles.container, {backgroundColor: '#fdf3e9'}]}>
       <StatusBar
-        barStyle={theme.name === 'dark' ? 'light-content' : 'dark-content'}
-        backgroundColor={theme.colors.headerBg}
+        barStyle="dark-content"
+        backgroundColor="#fdf3e9"
       />
 
       {/* Profile Header with Gradient */}
       <LinearGradient
-        colors={[theme.colors.headerBg, theme.colors.mainBackground]}
+        colors={['#a0644e', '#fdf3e9', '#b8a896']}
+        start={{x: 0, y: 0}}
+        end={{x: 1, y: 1}}
         style={styles.headerGradient}>
-        <View style={[styles.profileHeader, {backgroundColor: theme.colors.surface, borderColor: theme.colors.borderColor}]}>
+        <View style={styles.profileImageContainer}>
           <Image
             source={require('../assets/me2.jpeg')}
-            style={styles.avatar}
+            style={styles.profileImage}
           />
+        </View>
 
-          <TouchableOpacity style={styles.editBtn}>
-            <Edit3 size={18} color={theme.colors.brandAccent} />
-          </TouchableOpacity>
-
-          <Text style={[styles.name, {color: theme.colors.primaryText}]}>
-            Your Vibe Check
-          </Text>
-          <Text style={[styles.phone, {color: theme.colors.secondaryText}]}>
-            +1 234 567 8900
+        <View style={styles.profileInfoCard}>
+          <Text style={styles.profileName}>Your Vibe</Text>
+          <Text style={styles.profileBio}>
+            Curating digital aesthetics & whispering to algorithms. Based in the ether, living for the vibe. ✨
           </Text>
 
-          <View style={[styles.statusBadge, {backgroundColor: theme.colors.brandAccent}]}>
-            <Zap size={14} color="#fff" />
-            <Text style={styles.statusText}>Active rn ✨</Text>
+          <View style={styles.statsContainer}>
+            <View style={styles.statItem}>
+              <Text style={styles.statNumber}>12.8k</Text>
+              <Text style={styles.statLabel}>FOLLOWERS</Text>
+            </View>
+            <View style={styles.divider} />
+            <View style={styles.statItem}>
+              <Text style={styles.statNumber}>99%</Text>
+              <Text style={styles.statLabel}>VIBE CHECK</Text>
+            </View>
           </View>
         </View>
       </LinearGradient>
 
-      {/* About Section */}
-      <View style={styles.section}>
-        <Text style={[styles.sectionTitle, {color: theme.colors.secondaryText}]}>
-          about you
-        </Text>
-        <View style={[styles.infoCard, {backgroundColor: theme.colors.surface, borderColor: theme.colors.borderColor}]}>
-          <View style={[styles.infoRow, {borderBottomColor: theme.colors.borderColor}]}>
-            <View style={styles.infoLeft}>
-              <MessageCircle size={20} color={theme.colors.brandAccent} />
-              <Text style={[styles.infoLabel, {color: theme.colors.primaryText}]}>Status</Text>
-            </View>
-            <Text style={[styles.infoValue, {color: theme.colors.secondaryText}]}>Always vibing 🎵</Text>
-          </View>
-
-          <View style={[styles.infoRow, {borderBottomColor: theme.colors.borderColor}]}>
-            <View style={styles.infoLeft}>
-              <Zap size={20} color={theme.colors.brandAccent} />
-              <Text style={[styles.infoLabel, {color: theme.colors.primaryText}]}>Mood</Text>
-            </View>
-            <Text style={[styles.infoValue, {color: theme.colors.secondaryText}]}>lit fr fr 🔥</Text>
-          </View>
-
-          <View style={styles.infoRow}>
-            <View style={styles.infoLeft}>
-              {isDarkMode ? (
-                <Moon size={20} color={theme.colors.brandAccent} />
-              ) : (
-                <Sun size={20} color={theme.colors.brandAccent} />
-              )}
-              <Text style={[styles.infoLabel, {color: theme.colors.primaryText}]}>Theme</Text>
-            </View>
-            <Text style={[styles.infoValue, {color: theme.colors.secondaryText}]}>
-              {isDarkMode ? 'Dark Mode 🌙' : 'Light Mode ☀️'}
-            </Text>
-          </View>
-        </View>
-      </View>
-
       {/* Actions Section */}
       <View style={styles.section}>
-        <Text style={[styles.sectionTitle, {color: theme.colors.secondaryText}]}>
-          quick actions
-        </Text>
-
-        <LinearGradient
-          colors={[theme.colors.brandAccent, theme.colors.secondaryAccent]}
-          start={{x: 0, y: 0}}
-          end={{x: 1, y: 1}}
-          style={styles.actionButton}>
-          <TouchableOpacity
-            style={styles.actionContent}
-            onPress={handleCameraPress}
-            activeOpacity={0.75}>
-            <Camera size={24} color="#fff" />
-            <View style={styles.actionText}>
-              <Text style={styles.actionTitle}>Snap a Photo</Text>
-              <Text style={styles.actionSubtitle}>show your vibe</Text>
-            </View>
-          </TouchableOpacity>
-        </LinearGradient>
-
-        <TouchableOpacity
-          style={[styles.actionButton2, {backgroundColor: theme.colors.surface, borderColor: theme.colors.borderColor}]}
-          onPress={toggleTheme}
-          activeOpacity={0.75}>
-          <View style={styles.actionContent}>
-            {isDarkMode ? (
-              <Sun size={24} color={theme.colors.brandAccent} />
-            ) : (
-              <Moon size={24} color={theme.colors.brandAccent} />
-            )}
-            <View style={styles.actionText}>
-              <Text style={[styles.actionTitle, {color: theme.colors.primaryText}]}>
-                {isDarkMode ? 'Go Light' : 'Go Dark'}
-              </Text>
-              <Text style={[styles.actionSubtitle, {color: theme.colors.secondaryText}]}>
-                {isDarkMode ? 'bright & fresh' : 'cozy vibes'}
-              </Text>
-            </View>
+        <View style={styles.actionCard}>
+          <View style={styles.actionCardIcon}>
+            <Text style={styles.actionCardIconText}>🔒</Text>
           </View>
-        </TouchableOpacity>
+          <Text style={styles.actionCardTitle}>Profile Privacy</Text>
+          <Text style={styles.actionCardSubtitle}>Control who sees your main character arc</Text>
+        </View>
 
-        <TouchableOpacity
-          style={[styles.actionButton2, {backgroundColor: theme.colors.surface, borderColor: theme.colors.borderColor}]}
-          onPress={() => navigation.goBack()}
-          activeOpacity={0.75}>
-          <View style={styles.actionContent}>
-            <MessageCircle size={24} color={theme.colors.brandAccent} />
-            <View style={styles.actionText}>
-              <Text style={[styles.actionTitle, {color: theme.colors.primaryText}]}>Back to Chats</Text>
-              <Text style={[styles.actionSubtitle, {color: theme.colors.secondaryText}]}>keep chatting fr</Text>
-            </View>
+        <View style={styles.actionCard}>
+          <View style={styles.actionCardIcon}>
+            <Text style={styles.actionCardIconText}>✨</Text>
           </View>
-        </TouchableOpacity>
+          <Text style={styles.actionCardTitle}>Aesthetic Kit</Text>
+          <Text style={styles.actionCardSubtitle}>Customize your chat bubbles and glass levels</Text>
+        </View>
+
+        <View style={styles.actionCard}>
+          <View style={styles.actionCardIcon}>
+            <Text style={styles.actionCardIconText}>🔔</Text>
+          </View>
+          <Text style={styles.actionCardTitle}>Notification Flow</Text>
+          <Text style={styles.actionCardSubtitle}>Keep it quiet during your zen hours</Text>
+        </View>
       </View>
 
       <View style={{height: 30}} />
@@ -158,161 +94,96 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   headerGradient: {
-    paddingBottom: 20,
-  },
-  profileHeader: {
-    alignItems: 'center',
     paddingVertical: 40,
-    borderRadius: 20,
-    margin: 16,
-    borderWidth: 1,
-    elevation: 3,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    paddingHorizontal: 20,
   },
-  avatar: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    justifyContent: 'center',
+  profileImageContainer: {
     alignItems: 'center',
-    marginBottom: 16,
-    elevation: 6,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 4},
-    shadowOpacity: 0.3,
-    shadowRadius: 5,
+    marginBottom: 30,
   },
-  avatarText: {
-    fontSize: 56,
+  profileImage: {
+    width: 280,
+    height: 360,
+    borderRadius: 32,
   },
-  editBtn: {
-    position: 'absolute',
-    top: 16,
-    right: 16,
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
+  profileInfoCard: {
+    paddingHorizontal: 20,
   },
-  name: {
-    fontFamily: 'Georgia',
-    fontSize: 28,
-    fontWeight: '800',
-    marginBottom: 6,
-    letterSpacing: -0.5,
+  profileName: {
+    fontSize: 42,
+    fontWeight: '900',
+    color: '#1a1a1a',
+    marginBottom: 12,
+    letterSpacing: -1,
   },
-  phone: {
-    fontFamily: 'System',
+  profileBio: {
     fontSize: 14,
     fontWeight: '500',
-    marginBottom: 12,
-  },
-  statusBadge: {
-    flexDirection: 'row',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 16,
-    alignItems: 'center',
-    gap: 6,
-    marginTop: 8,
-  },
-  statusText: {
-    fontFamily: 'System',
-    color: '#fff',
-    fontSize: 12,
-    fontWeight: '600',
-  },
-  section: {
-    marginHorizontal: 16,
+    color: '#6a6a6a',
+    lineHeight: 20,
     marginBottom: 24,
   },
-  sectionTitle: {
-    fontFamily: 'System',
-    fontSize: 12,
-    fontWeight: '700',
-    textTransform: 'uppercase',
-    letterSpacing: 1,
-    marginBottom: 12,
-  },
-  infoCard: {
-    borderRadius: 16,
-    borderWidth: 1,
-    overflow: 'hidden',
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 1},
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-  },
-  infoRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    borderBottomWidth: 1,
-  },
-  infoLeft: {
+  statsContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
+    justifyContent: 'space-around',
   },
-  infoLabel: {
-    fontFamily: 'System',
-    fontSize: 15,
-    fontWeight: '600',
-  },
-  infoValue: {
-    fontFamily: 'System',
-    fontSize: 14,
-    fontWeight: '500',
-  },
-  actionButton: {
-    borderRadius: 16,
-    marginBottom: 12,
-    overflow: 'hidden',
-    elevation: 4,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-  },
-  actionButton2: {
-    borderRadius: 16,
-    marginBottom: 12,
-    borderWidth: 1,
-    overflow: 'hidden',
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 1},
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-  },
-  actionContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 16,
-    gap: 14,
-  },
-  actionText: {
+  statItem: {
     flex: 1,
+    alignItems: 'center',
   },
-  actionTitle: {
-    fontFamily: 'System',
-    fontSize: 16,
+  statNumber: {
+    fontSize: 32,
+    fontWeight: '900',
+    color: '#1a1a1a',
+    marginBottom: 4,
+  },
+  statLabel: {
+    fontSize: 11,
+    fontWeight: '800',
+    color: '#8a8a8a',
+    letterSpacing: 0.5,
+  },
+  divider: {
+    width: 1,
+    height: 40,
+    backgroundColor: 'rgba(0, 0, 0, 0.1)',
+  },
+  section: {
+    marginHorizontal: 20,
+    marginBottom: 24,
+    marginTop: 20,
+  },
+  actionCard: {
+    backgroundColor: 'rgba(255, 255, 255, 0.6)',
+    borderRadius: 20,
+    padding: 20,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.08)',
+  },
+  actionCardIcon: {
+    width: 50,
+    height: 50,
+    borderRadius: 16,
+    backgroundColor: 'rgba(160, 100, 78, 0.15)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  actionCardIconText: {
+    fontSize: 24,
+  },
+  actionCardTitle: {
+    fontSize: 18,
     fontWeight: '700',
-    color: '#fff',
+    color: '#1a1a1a',
+    marginBottom: 6,
   },
-  actionSubtitle: {
-    fontFamily: 'System',
+  actionCardSubtitle: {
     fontSize: 13,
     fontWeight: '500',
-    color: 'rgba(255,255,255,0.8)',
-    marginTop: 2,
+    color: '#6a6a6a',
+    lineHeight: 18,
   },
 });

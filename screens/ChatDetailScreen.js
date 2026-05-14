@@ -16,7 +16,7 @@ import {
 import LinearGradient from 'react-native-linear-gradient';
 import { useTheme } from '../ThemeContext';
 import chatAPI from '../api';
-import { Send, Smile, Camera, X, ArrowLeft, Phone, Video, MoreVertical, Mic } from 'lucide-react-native';
+import { Send, Smile, Camera, X, ArrowLeft, Phone, Video, MoreVertical, Mic, Plus } from 'lucide-react-native';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 
 export default function ChatDetailScreen({route, navigation}) {
@@ -197,8 +197,8 @@ export default function ChatDetailScreen({route, navigation}) {
         <LinearGradient
           colors={
             item.sender === 'me'
-              ? [theme.colors.sentBubbleStart, theme.colors.sentBubbleEnd]
-              : [theme.colors.receivedBubble, theme.colors.receivedBubble]
+              ? ['#a0644e', '#c97068']
+              : ['#e8d5c4', '#e8d5c4']
           }
           start={{x: 0, y: 0}}
           end={{x: 1, y: 1}}
@@ -206,19 +206,19 @@ export default function ChatDetailScreen({route, navigation}) {
             styles.messageBubble,
             item.sender === 'me'
               ? {borderTopRightRadius: 4}
-              : {borderTopLeftRadius: 4, borderWidth: 1, borderColor: theme.colors.receivedBubbleBorder},
+              : {borderTopLeftRadius: 4},
           ]}>
           <Text
             style={[
               styles.messageText,
-              {color: item.sender === 'me' ? '#fff' : theme.colors.primaryText},
+              {color: item.sender === 'me' ? '#fff' : '#3a3a3a'},
             ]}>
             {item.text}
           </Text>
           <Text
             style={[
               styles.messageTime,
-              {color: item.sender === 'me' ? 'rgba(255,255,255,0.65)' : theme.colors.secondaryText},
+              {color: item.sender === 'me' ? 'rgba(255,255,255,0.7)' : 'rgba(0, 0, 0, 0.5)'},
             ]}>
             {formatTime(item.timestamp)}
           </Text>
@@ -229,13 +229,22 @@ export default function ChatDetailScreen({route, navigation}) {
 
   return (
     <KeyboardAvoidingView
-      style={[styles.container, {backgroundColor: theme.colors.mainBackground}]}
+      style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'none'}>
-      <View style={{flex: 1, backgroundColor: theme.colors.mainBackground}}>
-      <StatusBar
-        barStyle={theme.name === 'dark' ? 'light-content' : 'dark-content'}
-        backgroundColor={theme.colors.headerBg}
-      />
+      <LinearGradient
+        colors={theme.name === 'dark' 
+          ? ['#1C120C', '#2A1A12', '#1C120C']
+          : ['#fdf3e9', '#fce8d9', '#fdf3e9']
+        }
+        start={{x: 0, y: 0}}
+        end={{x: 0, y: 1}}
+        style={{flex: 1}}>
+        <View style={{flex: 1}}>
+        <StatusBar
+          barStyle={theme.name === 'dark' ? 'light-content' : 'dark-content'}
+          backgroundColor="transparent"
+          translucent
+        />
       {loading ? (
         <View style={styles.loadingContainer}>
           <ActivityIndicator
@@ -249,12 +258,8 @@ export default function ChatDetailScreen({route, navigation}) {
       ) : (
         <>
           {/* Header */}
-          <LinearGradient
-            colors={[theme.colors.headerBg, theme.colors.headerBgSecondary]}
-            start={{x: 0, y: 0}}
-            end={{x: 1, y: 1}}
-            style={styles.headerGradient}>
-            <View style={styles.header}>
+          <View style={[styles.headerContainer, {backgroundColor: theme.name === 'dark' ? 'rgba(26, 26, 26, 0.8)' : 'rgba(253, 243, 233, 0.85)'}]}>
+            <View style={styles.headerTop}>
               <TouchableOpacity 
                 style={styles.backBtn}
                 onPress={() => navigation.goBack()}>
@@ -268,12 +273,12 @@ export default function ChatDetailScreen({route, navigation}) {
                 />
               )}
 
-              <View style={styles.headerInfo}>
+              <View style={styles.headerNameSection}>
                 <Text style={[styles.headerName, {color: theme.colors.primaryText}]}>
                   {name}
                 </Text>
                 <Text style={[styles.headerStatus, {color: theme.colors.secondaryText}]}>
-                  Active now ✨
+                  typing...
                 </Text>
               </View>
 
@@ -281,23 +286,17 @@ export default function ChatDetailScreen({route, navigation}) {
                 <TouchableOpacity 
                   style={styles.actionIconBtn}
                   onPress={handleVideoCallPress}>
-                  <Video size={20} color={theme.colors.brandAccent} />
+                  <Video size={20} color={theme.colors.primaryText} />
                 </TouchableOpacity>
                 
                 <TouchableOpacity 
                   style={styles.actionIconBtn}
-                  onPress={handleCallPress}>
-                  <Phone size={20} color={theme.colors.brandAccent} />
-                </TouchableOpacity>
-
-                <TouchableOpacity 
-                  style={styles.actionIconBtn}
                   onPress={() => setShowMenu(!showMenu)}>
-                  <MoreVertical size={20} color={theme.colors.brandAccent} />
+                  <MoreVertical size={20} color={theme.colors.primaryText} />
                 </TouchableOpacity>
               </View>
             </View>
-          </LinearGradient>
+          </View>
 
           {/* Menu Modal */}
           {showMenu && (
@@ -377,45 +376,49 @@ export default function ChatDetailScreen({route, navigation}) {
             style={[
               styles.inputContainer,
               {
-                borderTopColor: theme.colors.borderColor,
-                backgroundColor: theme.colors.surface,
+                borderTopColor: theme.name === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.08)',
+                backgroundColor: theme.name === 'dark' ? 'rgba(26, 26, 26, 0.8)' : 'rgba(253, 243, 233, 0.8)',
               },
             ]}>
             <TouchableOpacity style={styles.iconBtn} onPress={handleCameraPress}>
-              <Camera size={20} color={theme.colors.brandAccent} />
+              <Plus size={22} color="#c97068" />
             </TouchableOpacity>
             
             {!isRecording ? (
               <>
-                <TextInput
-                  style={[
-                    styles.input,
-                    {
-                      borderColor: theme.colors.borderColor,
-                      color: theme.colors.primaryText,
-                      backgroundColor: theme.colors.mainBackground,
-                    },
-                  ]}
-                  placeholderTextColor={theme.colors.secondaryText}
-                  placeholder="yo, what's up?"
-                  value={inputText}
-                  onChangeText={setInputText}
-                  multiline
-                  maxLength={500}
-                  editable={!isRecording}
-                />
+            <TextInput
+              style={[
+                styles.input,
+                {
+                  borderColor: theme.name === 'dark' ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.08)',
+                  color: theme.colors.primaryText,
+                  backgroundColor: theme.name === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.8)',
+                },
+              ]}
+              placeholderTextColor={theme.colors.secondaryText}
+              placeholder="Speak your truth..."
+              value={inputText}
+              onChangeText={setInputText}
+              multiline
+              maxLength={500}
+              editable={!isRecording}
+            />
 
                 <TouchableOpacity style={styles.iconBtn}>
-                  <Smile size={20} color={theme.colors.brandAccent} />
+                  <Smile size={22} color="#c97068" />
                 </TouchableOpacity>
                 
                 {(inputText.trim() || selectedPhoto) ? (
-                  <TouchableOpacity
-                    style={[styles.sendButton, {backgroundColor: theme.colors.brandAccent}]}
-                    onPress={sendMessage}
-                    activeOpacity={0.75}>
-                    <Send size={20} color="#fff" />
-                  </TouchableOpacity>
+                  <LinearGradient
+                    colors={['#a0644e', '#c97068']}
+                    style={styles.sendButton}>
+                    <TouchableOpacity
+                      onPress={sendMessage}
+                      activeOpacity={0.75}
+                      style={{width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center'}}>
+                      <Send size={20} color="#fff" />
+                    </TouchableOpacity>
+                  </LinearGradient>
                 ) : (
                   <TouchableOpacity
                     style={[styles.voiceButton, {backgroundColor: theme.colors.brandAccent}]}
@@ -452,7 +455,8 @@ export default function ChatDetailScreen({route, navigation}) {
           </Modal>
         </>
       )}
-      </View>
+        </View>
+      </LinearGradient>
     </KeyboardAvoidingView>
   );
 }
@@ -460,6 +464,55 @@ export default function ChatDetailScreen({route, navigation}) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  headerContainer: {
+    paddingTop: 50,
+    paddingHorizontal: 20,
+    paddingBottom: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(0, 0, 0, 0.08)',
+  },
+  headerTop: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: 12,
+  },
+  backBtn: {
+    width: 44,
+    height: 44,
+    borderRadius: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  headerAvatar: {
+    width: 50,
+    height: 50,
+    borderRadius: 14,
+    resizeMode: 'cover',
+  },
+  headerNameSection: {
+    flex: 1,
+  },
+  headerName: {
+    fontSize: 18,
+    fontWeight: '700',
+  },
+  headerStatus: {
+    fontSize: 13,
+    fontWeight: '500',
+    marginTop: 2,
+  },
+  headerActions: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  actionIconBtn: {
+    width: 44,
+    height: 44,
+    borderRadius: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   loadingContainer: {
     flex: 1,
@@ -514,7 +567,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingHorizontal: 12,
     paddingVertical: 12,
-    borderTopWidth: 0,
+    borderTopWidth: 1,
     alignItems: 'flex-end',
     gap: 8,
   },
@@ -537,11 +590,12 @@ const styles = StyleSheet.create({
     maxHeight: 100,
   },
   sendButton: {
-    borderRadius: 50,
+    borderRadius: 24,
     width: 44,
     height: 44,
     justifyContent: 'center',
     alignItems: 'center',
+    overflow: 'hidden',
     elevation: 6,
     shadowColor: '#000',
     shadowOffset: {width: 0, height: 3},

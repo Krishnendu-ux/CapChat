@@ -10,14 +10,13 @@ import {
   Platform,
   ActivityIndicator,
   Alert,
+  ScrollView,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import { useTheme } from '../ThemeContext';
 import { useAuth } from '../AuthContext';
-import { Mail, Lock, ArrowRight } from 'lucide-react-native';
+import { ArrowRight } from 'lucide-react-native';
 
 export default function LoginScreen({ navigation }) {
-  const { theme } = useTheme();
   const { login, loading } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -59,44 +58,51 @@ export default function LoginScreen({ navigation }) {
 
   return (
     <KeyboardAvoidingView
-      style={[styles.container, { backgroundColor: theme.colors.mainBackground }]}
+      style={[styles.container, { backgroundColor: '#fdf3e9' }]}
       behavior={Platform.OS === 'ios' ? 'padding' : 'none'}>
       <StatusBar
-        barStyle={theme.name === 'dark' ? 'light-content' : 'dark-content'}
-        backgroundColor={theme.colors.headerBg}
+        barStyle="dark-content"
+        backgroundColor="#fdf3e9"
       />
       
-      {/* Header Gradient */}
+      {/* Header with Logo */}
       <LinearGradient
-        colors={[theme.colors.headerBg, theme.colors.mainBackground]}
+        colors={['#fdf3e9', '#fce8d9']}
         style={styles.headerGradient}>
         <View style={styles.headerContent}>
-          <Text style={[styles.title, { color: theme.colors.primaryText }]}>
-            Welcome Back
+          <View style={styles.logoContainer}>
+            <Text style={styles.logoIcon}>💬</Text>
+          </View>
+          <Text style={[styles.title, { color: '#1a1a1a' }]}>
+            CapChat
           </Text>
-          <Text style={[styles.subtitle, { color: theme.colors.secondaryText }]}>
-            Login to CapChat
+          <Text style={[styles.subtitle, { color: '#7a7a7a' }]}>
+            your vibe ✨
           </Text>
         </View>
       </LinearGradient>
 
       {/* Form Container */}
-      <View style={styles.formContainer}>
+      <ScrollView
+        style={[styles.formContainer, { backgroundColor: '#fdf3e9' }]}
+        contentContainerStyle={styles.formContent}
+        showsVerticalScrollIndicator={false}>
+        <Text style={styles.formTitle}>Welcome Back</Text>
         
         {/* Email Input */}
         <View style={styles.inputGroup}>
+          <Text style={styles.inputLabel}>EMAIL</Text>
           <View style={[
             styles.inputWrapper,
             {
-              backgroundColor: theme.colors.surface,
-              borderColor: errors.email ? theme.colors.destructive : theme.colors.borderColor,
+              backgroundColor: 'rgba(255, 255, 255, 0.6)',
+              borderColor: errors.email ? '#d9594d' : 'rgba(0, 0, 0, 0.1)',
             }
           ]}>
-            <Mail size={20} color={theme.colors.secondaryText} />
             <TextInput
-              style={[styles.input, { color: theme.colors.primaryText }]}
-              placeholder="Email"
-              placeholderTextColor={theme.colors.secondaryText}
+              style={[styles.input, { color: '#1a1a1a' }]}
+              placeholder="Your email here"
+              placeholderTextColor="#bbb"
               value={email}
               onChangeText={setEmail}
               keyboardType="email-address"
@@ -104,7 +110,7 @@ export default function LoginScreen({ navigation }) {
             />
           </View>
           {errors.email && (
-            <Text style={[styles.errorText, { color: theme.colors.destructive }]}>
+            <Text style={[styles.errorText, { color: '#d9594d' }]}>
               {errors.email}
             </Text>
           )}
@@ -112,64 +118,92 @@ export default function LoginScreen({ navigation }) {
 
         {/* Password Input */}
         <View style={styles.inputGroup}>
+          <Text style={styles.inputLabel}>SECRET KEY</Text>
           <View style={[
             styles.inputWrapper,
             {
-              backgroundColor: theme.colors.surface,
-              borderColor: errors.password ? theme.colors.destructive : theme.colors.borderColor,
+              backgroundColor: 'rgba(255, 255, 255, 0.6)',
+              borderColor: errors.password ? '#d9594d' : 'rgba(0, 0, 0, 0.1)',
             }
           ]}>
-            <Lock size={20} color={theme.colors.secondaryText} />
             <TextInput
-              style={[styles.input, { color: theme.colors.primaryText }]}
-              placeholder="Password"
-              placeholderTextColor={theme.colors.secondaryText}
+              style={[styles.input, { color: '#1a1a1a' }]}
+              placeholder="••••••••"
+              placeholderTextColor="#bbb"
               value={password}
               onChangeText={setPassword}
               secureTextEntry={!passwordVisible}
               editable={!loading}
             />
             <TouchableOpacity onPress={() => setPasswordVisible(!passwordVisible)}>
-              <Text style={[styles.toggleText, { color: theme.colors.brandAccent }]}>
-                {passwordVisible ? 'Hide' : 'Show'}
+              <Text style={styles.toggleText}>
+                {passwordVisible ? '👁' : '👁‍🗨'}
               </Text>
             </TouchableOpacity>
           </View>
           {errors.password && (
-            <Text style={[styles.errorText, { color: theme.colors.destructive }]}>
+            <Text style={[styles.errorText, { color: '#d9594d' }]}>
               {errors.password}
             </Text>
           )}
         </View>
 
-        {/* Login Button */}
-        <TouchableOpacity
-          style={[styles.button, { backgroundColor: theme.colors.brandAccent }]}
-          onPress={handleLogin}
-          disabled={loading}
-          activeOpacity={0.75}>
-          {loading ? (
-            <ActivityIndicator color="#fff" />
-          ) : (
-            <View style={styles.buttonContent}>
-              <Text style={styles.buttonText}>Login</Text>
-              <ArrowRight size={20} color="#fff" />
-            </View>
-          )}
+        {/* Forgot Password Link */}
+        <TouchableOpacity style={styles.forgotContainer}>
+          <Text style={styles.forgotText}>Forgot secret key?</Text>
         </TouchableOpacity>
+        
+        {/* Login Button with Gradient */}
+        <LinearGradient
+          colors={['#a0644e', '#c97068']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.gradientButton}>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={handleLogin}
+            disabled={loading}
+            activeOpacity={0.75}>
+            {loading ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <View style={styles.buttonContent}>
+                <Text style={styles.buttonText}>Login</Text>
+                <ArrowRight size={20} color="#fff" strokeWidth={2.5} />
+              </View>
+            )}
+          </TouchableOpacity>
+        </LinearGradient>
+
+        {/* OR Divider */}
+        <View style={styles.dividerContainer}>
+          <View style={styles.divider} />
+          <Text style={styles.dividerText}>OR SIGN IN WITH</Text>
+          <View style={styles.divider} />
+        </View>
+
+        {/* Social Login Buttons */}
+        <View style={styles.socialContainer}>
+          <TouchableOpacity style={styles.socialButton}>
+            <Text style={styles.socialText}>G</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.socialButton}>
+            <Text style={styles.socialText}>f</Text>
+          </TouchableOpacity>
+        </View>
 
         {/* Signup Link */}
         <View style={styles.signupContainer}>
-          <Text style={[styles.signupText, { color: theme.colors.secondaryText }]}>
-            Don't have an account?{' '}
+          <Text style={styles.signupText}>
+            New to the CapChat?{' '}
           </Text>
           <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
-            <Text style={[styles.signupLink, { color: theme.colors.brandAccent }]}>
-              Sign up
+            <Text style={styles.signupLink}>
+              Sign Up
             </Text>
           </TouchableOpacity>
         </View>
-      </View>
+      </ScrollView>
     </KeyboardAvoidingView>
   );
 }
@@ -179,36 +213,66 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   headerGradient: {
-    paddingVertical: 40,
+    paddingVertical: 50,
     paddingHorizontal: 20,
   },
   headerContent: {
     alignItems: 'center',
   },
+  logoContainer: {
+    width: 80,
+    height: 80,
+    borderRadius: 24,
+    backgroundColor: 'rgba(255, 255, 255, 0.7)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 24,
+  },
+  logoIcon: {
+    fontSize: 40,
+  },
   title: {
-    fontSize: 32,
-    fontWeight: '800',
+    fontSize: 48,
+    fontWeight: '900',
     marginBottom: 8,
+    letterSpacing: -1,
   },
   subtitle: {
-    fontSize: 14,
-    fontWeight: '500',
+    fontSize: 15,
+    fontWeight: '600',
   },
   formContainer: {
     flex: 1,
-    paddingHorizontal: 20,
-    paddingTop: 30,
+    backgroundColor: '#fdf3e9',
+  },
+  formContent: {
+    paddingHorizontal: 24,
+    paddingTop: 40,
+    paddingBottom: 40,
+  },
+  formTitle: {
+    fontSize: 28,
+    fontWeight: '900',
+    color: '#1a1a1a',
+    marginBottom: 32,
   },
   inputGroup: {
-    marginBottom: 20,
+    marginBottom: 24,
+  },
+  inputLabel: {
+    fontSize: 11,
+    fontWeight: '800',
+    color: '#8a8a8a',
+    letterSpacing: 1,
+    marginBottom: 8,
   },
   inputWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    borderRadius: 18,
+    paddingHorizontal: 18,
+    paddingVertical: 14,
     gap: 12,
   },
   input: {
@@ -217,8 +281,8 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   toggleText: {
-    fontSize: 12,
-    fontWeight: '600',
+    fontSize: 18,
+    fontWeight: '500',
   },
   errorText: {
     fontSize: 12,
@@ -226,10 +290,23 @@ const styles = StyleSheet.create({
     marginTop: 6,
     marginLeft: 4,
   },
+  forgotContainer: {
+    alignItems: 'flex-end',
+    marginBottom: 28,
+  },
+  forgotText: {
+    color: '#a0644e',
+    fontSize: 14,
+    fontWeight: '700',
+  },
+  gradientButton: {
+    borderRadius: 28,
+    overflow: 'hidden',
+    marginBottom: 28,
+  },
   button: {
-    borderRadius: 12,
-    paddingVertical: 14,
-    marginTop: 10,
+    borderRadius: 28,
+    paddingVertical: 16,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -241,21 +318,61 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: '#fff',
-    fontSize: 16,
+    fontSize: 17,
     fontWeight: '700',
+  },
+  dividerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 24,
+    gap: 12,
+  },
+  divider: {
+    flex: 1,
+    height: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.1)',
+  },
+  dividerText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#8a8a8a',
+    letterSpacing: 0.8,
+  },
+  socialContainer: {
+    flexDirection: 'row',
+    gap: 16,
+    justifyContent: 'center',
+    marginBottom: 32,
+  },
+  socialButton: {
+    width: 56,
+    height: 56,
+    borderRadius: 18,
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.08)',
+  },
+  socialText: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: '#1a1a1a',
   },
   signupContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 20,
+    gap: 4,
   },
   signupText: {
     fontSize: 14,
     fontWeight: '500',
+    color: '#7a7a7a',
   },
   signupLink: {
     fontSize: 14,
     fontWeight: '700',
+    color: '#a0644e',
   },
 });

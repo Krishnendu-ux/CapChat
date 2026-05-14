@@ -398,45 +398,53 @@ export default function ChatScreen({navigation}) {
   const displayChats = isSearching || searchQuery.trim().length > 0 ? searchResults : chats;
 
   return (
-    <View style={[styles.container, {backgroundColor: theme.colors.mainBackground}]}>
-      <StatusBar
-        barStyle={theme.name === 'dark' ? 'light-content' : 'dark-content'}
-        backgroundColor={theme.colors.headerBg}
-      />
+    <LinearGradient
+      colors={theme.name === 'dark' 
+        ? ['#1C120C', '#2A1A12', '#1C120C']
+        : ['#fdf3e9', '#fce8d9', '#fdf3e9']
+      }
+      start={{x: 0, y: 0}}
+      end={{x: 0, y: 1}}
+      style={{flex: 1}}>
+      <View style={[styles.container]}>
+        <StatusBar
+          barStyle={theme.name === 'dark' ? 'light-content' : 'dark-content'}
+          backgroundColor="transparent"
+          translucent
+        />
 
-      {/* Header with gradient */}
-      <LinearGradient
-        colors={[theme.colors.headerBg, theme.colors.mainBackground]}
-        style={styles.headerGradient}>
-        <View style={styles.headerContent}>
-          <View>
-            <Text style={[styles.headerTitle, {color: theme.colors.primaryText}]}>
-              CapChat
-            </Text>
-            <Text style={[styles.headerSubtitle, {color: theme.colors.secondaryText}]}>
-              your vibe ✨
-            </Text>
+      {/* Header with User Avatar and Settings */}
+      <View style={[styles.headerContainer, {backgroundColor: theme.name === 'dark' ? 'rgba(26, 26, 26, 0.85)' : 'rgba(253, 243, 233, 0.85)'}]}>
+        <View style={styles.headerTop}>
+          <View style={styles.avatarSmall}>
+            <Image
+              source={require('../assets/me2.jpeg')}
+              style={styles.avatarSmallImage}
+            />
           </View>
-          <View style={styles.headerIcons}>
-            <TouchableOpacity style={styles.headerIconBtn} onPress={() => setShowMenu(true)}>
-              <Settings size={22} color={theme.colors.brandAccent} />
-            </TouchableOpacity>
-          </View>
+          <Text style={[styles.headerBrand, {color: theme.colors.brandAccent}]}>CapChat</Text>
+          <TouchableOpacity style={styles.headerSettings} onPress={() => setShowMenu(true)}>
+            <Settings size={22} color={theme.colors.brandAccent} />
+          </TouchableOpacity>
         </View>
 
-        {/* Search bar with modern styling */}
+        {/* CHATS MESSAGES Title */}
+        <View style={styles.titleContainer}>
+          <Text style={[styles.chatsTitle, {color: theme.colors.primaryText}]}>CHATS</Text>
+          <Text style={[styles.messagesTitle, {color: theme.colors.secondaryText}]}>MESSAGES</Text>
+        </View>
+
+        {/* Search bar */}
         <View style={[styles.searchContainer, {
           backgroundColor: theme.name === 'dark' 
-            ? 'rgba(255, 255, 255, 0.08)' 
-            : 'rgba(0, 0, 0, 0.05)',
-          borderColor: theme.name === 'dark'
-            ? 'rgba(255, 255, 255, 0.15)'
-            : 'rgba(0, 0, 0, 0.1)',
+            ? 'rgba(255, 255, 255, 0.1)' 
+            : 'rgba(255, 255, 255, 0.8)',
+          borderColor: theme.name === 'dark' ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.08)',
         }]}>
           <Search size={18} color={theme.colors.secondaryText} />
           <TextInput
             style={[styles.searchInput, {color: theme.colors.primaryText}]}
-            placeholder="search chats or messages"
+            placeholder="Search mutuals..."
             placeholderTextColor={theme.colors.secondaryText}
             value={searchQuery}
             onChangeText={handleSearch}
@@ -447,7 +455,7 @@ export default function ChatScreen({navigation}) {
             </TouchableOpacity>
           )}
         </View>
-      </LinearGradient>
+      </View>
 
       {/* Chat list */}
       <FlatList
@@ -469,14 +477,11 @@ export default function ChatScreen({navigation}) {
 
       {/* Floating action button */}
       <TouchableOpacity
-        style={[
-          styles.fab,
-          {backgroundColor: theme.colors.brandAccent},
-        ]}
+        style={styles.fab}
         onPress={() => setShowContactsModal(true)}
         activeOpacity={0.75}>
         <LinearGradient
-          colors={[theme.colors.brandAccent, theme.colors.brandAccent]}
+          colors={['#c97068', '#e8745c']}
           style={{
             width: '100%',
             height: '100%',
@@ -484,7 +489,7 @@ export default function ChatScreen({navigation}) {
             justifyContent: 'center',
             alignItems: 'center',
           }}>
-          <Plus size={28} color="#fff" strokeWidth={2.5} />
+          <Edit size={28} color="#fff" strokeWidth={2.5} />
         </LinearGradient>
       </TouchableOpacity>
 
@@ -639,6 +644,7 @@ export default function ChatScreen({navigation}) {
         </TouchableOpacity>
       </Modal>
     </View>
+    </LinearGradient>
   );
 }
 
@@ -646,54 +652,62 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  headerGradient: {
-    paddingTop: 32,
-    paddingBottom: 28,
+  headerContainer: {
+    paddingTop: 50,
     paddingHorizontal: 20,
+    paddingBottom: 20,
   },
-  headerTitle: {
-    fontFamily: 'System',
-    fontSize: 36,
-    fontWeight: '900',
-    letterSpacing: -1,
-    paddingHorizontal: 0,
-    textTransform: 'capitalize',
-  },
-  headerContent: {
+  headerTop: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    marginBottom: 20,
+    alignItems: 'center',
+    marginBottom: 24,
   },
-  headerSubtitle: {
-    fontFamily: 'System',
-    fontSize: 14,
-    fontWeight: '600',
-    marginTop: 6,
-    opacity: 0.8,
-  },
-  headerIcons: {
-    flexDirection: 'row',
-    gap: 14,
-  },
-  headerIconBtn: {
+  avatarSmall: {
     width: 44,
     height: 44,
-    borderRadius: 22,
+    borderRadius: 12,
+    overflow: 'hidden',
+  },
+  avatarSmallImage: {
+    width: 44,
+    height: 44,
+  },
+  headerBrand: {
+    fontSize: 28,
+    fontWeight: '900',
+    letterSpacing: 2,
+  },
+  headerSettings: {
+    width: 44,
+    height: 44,
+    borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  titleContainer: {
+    marginBottom: 20,
+  },
+  chatsTitle: {
+    fontSize: 42,
+    fontWeight: '900',
+    letterSpacing: -1,
+  },
+  messagesTitle: {
+    fontSize: 42,
+    fontWeight: '300',
+    letterSpacing: -1,
   },
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderWidth: 0,
     borderRadius: 28,
     paddingHorizontal: 16,
     paddingVertical: 12,
     gap: 12,
+    borderWidth: 1,
   },
   searchInput: {
-    fontFamily: 'System',
     flex: 1,
     fontSize: 15,
     fontWeight: '500',
@@ -714,42 +728,41 @@ const styles = StyleSheet.create({
   },
   chatItem: {
     flexDirection: 'row',
-    paddingHorizontal: 12,
+    paddingHorizontal: 16,
     paddingVertical: 14,
     borderBottomWidth: 0,
     alignItems: 'center',
     gap: 14,
     marginHorizontal: 4,
     marginVertical: 6,
-    borderRadius: 20,
+    borderRadius: 18,
+    backgroundColor: 'rgba(255, 255, 255, 0.6)',
+    borderWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.08)',
   },
   avatarWrapper: {
     position: 'relative',
   },
   avatarContainer: {
-    width: 56,
-    height: 56,
+    width: 64,
+    height: 64,
     borderRadius: 18,
     justifyContent: 'center',
     alignItems: 'center',
-    elevation: 0,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 0},
-    shadowOpacity: 0,
-    shadowRadius: 0,
+    overflow: 'hidden',
   },
   avatarText: {
-    fontSize: 28,
+    fontSize: 32,
   },
   onlineDot: {
     position: 'absolute',
     bottom: 0,
     right: 0,
-    width: 16,
-    height: 16,
-    borderRadius: 8,
+    width: 18,
+    height: 18,
+    borderRadius: 9,
     borderWidth: 3,
-    borderColor: '#fff',
+    borderColor: '#fdf3e9',
   },
   chatContentWrapper: {
     flex: 1,
@@ -769,10 +782,10 @@ const styles = StyleSheet.create({
   },
   chatTime: {
     fontFamily: 'System',
-    fontSize: 12,
-    fontWeight: '500',
+    fontSize: 13,
+    fontWeight: '600',
     marginLeft: 8,
-    opacity: 0.7,
+    color: '#a0a0a0',
   },
   chatMessage: {
     fontFamily: 'System',
@@ -891,7 +904,7 @@ const styles = StyleSheet.create({
   // Contacts Modal Styles
   contactsModalContainer: {
     flex: 1,
-    paddingTop: 0,
+    paddingTop: 40,
   },
   contactsHeader: {
     flexDirection: 'row',
