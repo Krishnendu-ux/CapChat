@@ -416,12 +416,15 @@ export default function ChatScreen({navigation}) {
       {/* Header with User Avatar and Settings */}
       <View style={[styles.headerContainer, {backgroundColor: theme.name === 'dark' ? 'rgba(26, 26, 26, 0.85)' : 'rgba(253, 243, 233, 0.85)'}]}>
         <View style={styles.headerTop}>
-          <View style={styles.avatarSmall}>
+          <TouchableOpacity 
+            style={styles.avatarSmall}
+            onPress={() => navigation.navigate('Profile')}
+            activeOpacity={0.7}>
             <Image
               source={require('../assets/me2.jpeg')}
               style={styles.avatarSmallImage}
             />
-          </View>
+          </TouchableOpacity>
           <Text style={[styles.headerBrand, {color: theme.colors.brandAccent}]}>CapChat</Text>
           <TouchableOpacity style={styles.headerSettings} onPress={() => setShowMenu(true)}>
             <Settings size={22} color={theme.colors.brandAccent} />
